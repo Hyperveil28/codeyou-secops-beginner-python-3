@@ -1,45 +1,83 @@
-# Login Attempt Tracker
+# ============================================================
+# Week 3 - Conditionals and Logic in Python
+# Assignment: Building a Login Attempt Analyzer
+#
+# File: login_report.py
+#
+# Description:
+# This script analyzes failed login attempts and classifies
+# the login event based on the number of failed attempts and
+# whether the account is privileged.
+#
+# Skills Practiced:
+# - User input
+# - Variables
+# - if / elif / else conditionals
+# - Logical operators
+# - Formatted security reporting
+# - Datetime timestamping
+# ============================================================
 
-## Overview
+from datetime import datetime
 
-The Login Attempt Tracker is a beginner Python cybersecurity exercise that uses conditional logic to analyze failed login attempts and assign a risk level.
 
-This script simulates how a SOC analyst or SIEM platform might evaluate suspicious authentication activity. It checks the number of failed login attempts and whether the account is privileged, then produces a structured risk report.
+print("=" * 40)
+print("   Cyber Defense - Login Attempt Report")
+print("=" * 40)
 
-## Skills Practiced
+# Collect analyst and account information
+analyst_name = input("Enter analyst name: ")
+username = input("Enter username being analyzed: ")
 
-- Python variables
-- User input handling
-- Boolean values
-- `if`, `elif`, and `else` statements
-- Logical operators: `and`, `or`, `not`
-- Basic cybersecurity risk classification
-- Analyst-style reporting
+# Collect failed login count
+failed_logins = int(input("Enter number of failed login attempts: "))
 
-## How It Works
+# Collect privileged account status
+privileged_input = input("Is this a privileged account? (yes/no): ").strip().lower()
 
-The script asks the user for:
+# Normalize privileged account response
+is_privileged = privileged_input == "yes"
 
-1. Username  
-2. Number of failed login attempts  
-3. Whether the account is privileged  
+# Default values
+risk_level = "INFORMATIONAL"
+alert_message = "[+] No failed logins recorded."
 
-It then assigns a risk level:
+# Analyze login activity using conditionals and logical operators
+if failed_logins > 5 and is_privileged:
+    risk_level = "HIGH"
+    alert_message = "[*] Privileged account shows multiple failed logins!"
 
-| Condition | Risk Level |
-|---|---|
-| 10 or more failed attempts on a privileged account | Critical |
-| 10 or more failed attempts on a normal account | High |
-| 5 or more failed attempts on a privileged account | High |
-| 5 or more failed attempts on a normal account | Medium |
-| 1 or more failed attempts on a privileged account | Medium |
-| 0 failed attempts | Low |
+elif failed_logins > 5 and not is_privileged:
+    risk_level = "MEDIUM"
+    alert_message = "[!] Standard account shows multiple failed logins."
 
-## Example
+elif failed_logins >= 1 and failed_logins <= 5:
+    risk_level = "LOW"
+    alert_message = "[-] Some failed login attempts observed."
 
-```text
-Username: admin
-Failed Login Attempts: 12
-Privileged Account: True
-Risk Level: Critical
-Recommended Action: Immediately lock the account, investigate activity, and notify security leadership.
+elif failed_logins == 0:
+    risk_level = "INFORMATIONAL"
+    alert_message = "[+] No failed logins recorded."
+
+else:
+    risk_level = "UNKNOWN"
+    alert_message = "[!] Invalid login attempt count detected."
+
+# Generate timestamp
+report_time = datetime.now().strftime("%Y-%m-%d %H:%M")
+
+# Format privileged account display
+privileged_display = "Yes" if is_privileged else "No"
+
+# Display final report
+print("\n" + "=" * 40)
+print("   Cyber Defense - Login Attempt Report")
+print("=" * 40)
+print(f"Analyst: {analyst_name}")
+print(f"User: {username}")
+print(f"Failed Attempts: {failed_logins}")
+print(f"Privileged Account: {privileged_display}")
+print(f"Risk Level: {risk_level}")
+print(f"Alert: {alert_message}")
+print(f"Report Generated: {report_time}")
+print("=" * 40)
